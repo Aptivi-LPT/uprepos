@@ -30,7 +30,8 @@ enum_and_update() {
 		[[ ! -e "$maybe_git/.git" ]] && continue
 		echo "Updating $maybe_git..."
 		git -C $maybe_git fetch
-		git -C $maybe_git pull
+		git -C $maybe_git pull --recurse-submodule
+		git -C $maybe_git submodule update --remote
 		echo "Update of $maybe_git done."
 	done
 }
