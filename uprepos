@@ -23,21 +23,31 @@
 # SOFTWARE.
 #
 
+if ! command -v tput &> /dev/null; then
+        AQUA=""
+        ORANGE=""
+        RESET=""
+else
+        AQUA=$(tput setaf 45)
+        ORANGE=$(tput setaf 214)
+        RESET=$(tput sgr0)
+fi
+
 enum_and_update() { 
         readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
 	for maybe_git in "${maybe_gits[@]}"
 	do
 		[[ ! -e "$maybe_git/.git" ]] && continue
-		echo "Updating $maybe_git..."
+		echo "${AQUA}[+] ${RESET}Updating $maybe_git..."
 		git -C $maybe_git fetch
 		git -C $maybe_git pull --recurse-submodule
 		git -C $maybe_git submodule update --remote
-		echo "Update of $maybe_git done."
+		echo "${AQUA}[+] ${RESET}Update of $maybe_git done."
 	done
 }
 
 if [[ -z $1 ]]; then
-        echo "Specify git directory containing all repositories."
+        echo "${ORANGE}[!] ${RESET}Specify git directory containing all repositories."
 else
         enum_and_update $1
 fi
