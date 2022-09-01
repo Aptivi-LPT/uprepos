@@ -47,7 +47,7 @@ enum_and_update() {
 }
 
 if [[ -z $1 ]]; then
-        echo "${ORANGE}[!] ${RESET}Specify git directory containing all repositories."
+	enum_and_update $PWD
 else
         enum_and_update $1
 fi
