@@ -37,7 +37,10 @@ enum_and_update() {
         readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
 	for maybe_git in "${maybe_gits[@]}"
 	do
-		[[ ! -e "$maybe_git/.git" ]] && continue
+		if [[ ! -e "$maybe_git/.git" ]]; then
+                    echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to update..."
+                    continue
+                fi
 		echo "${AQUA}[+] ${RESET}Updating $maybe_git..."
 		git -C $maybe_git fetch
 		git -C $maybe_git pull --recurse-submodule
