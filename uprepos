@@ -24,33 +24,33 @@
 #
 
 if ! command -v tput &> /dev/null; then
-        AQUA=""
-        ORANGE=""
-        RESET=""
+    AQUA=""
+    ORANGE=""
+    RESET=""
 else
-        AQUA=$(tput setaf 45)
-        ORANGE=$(tput setaf 214)
-        RESET=$(tput sgr0)
+    AQUA=$(tput setaf 45)
+    ORANGE=$(tput setaf 214)
+    RESET=$(tput sgr0)
 fi
 
-enum_and_update() { 
-        readarray -t maybe_gits < <( find "$1" -maxdepth 1 -name "*" -type d )
-	for maybe_git in "${maybe_gits[@]}"
-	do
-		if [[ ! -e "$maybe_git/.git" ]]; then
-                    echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to update..."
-                    continue
-                fi
-		echo "${AQUA}[+] ${RESET}Updating $maybe_git..."
-		git -C $maybe_git fetch
-		git -C $maybe_git pull --recurse-submodule
-		git -C $maybe_git submodule update --remote
-		echo "${AQUA}[+] ${RESET}Update of $maybe_git done."
-	done
+enum_and_update() {
+    readarray -t maybe_gits < <( find "$1" -mindepth 1 -maxdepth 1 -name "*" -type d )
+    for maybe_git in "${maybe_gits[@]}"
+    do
+        if [[ ! -e "$maybe_git/.git" ]]; then
+            echo "${ORANGE}[*] ${RESET}Repo $maybe_git is not a git repo. Refusing to update..."
+            continue
+        fi
+        echo "${AQUA}[+] ${RESET}Updating $maybe_git..."
+        git -C "$maybe_git" fetch
+        git -C "$maybe_git" pull --recurse-submodule
+        git -C "$maybe_git" submodule update --remote
+        echo "${AQUA}[+] ${RESET}Update of $maybe_git done."
+    done
 }
 
 if [[ -z $1 ]]; then
-	enum_and_update $PWD
+    enum_and_update $PWD
 else
-        enum_and_update $1
+    enum_and_update "$1"
 fi
